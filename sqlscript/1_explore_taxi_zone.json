@@ -1,0 +1,20 @@
+{
+	"name": "1_explore_taxi_zone",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi/discorvery"
+		},
+		"content": {
+			"query": "-- This is auto-generated code\nSELECT\n    *\nFROM\n    OPENROWSET(\n        BULK 'raw/taxi_zone.csv',\n        DATA_SOURCE = 'nyc_taxi_data_raw',\n        format = 'CSV',\n        PARSER_VERSION = '2.0',\n        HEADER_ROW = TRUE,\n        FIELDTERMINATOR = ',',\n        ROWTERMINATOR = '\\n'\n    ) \n    with (\n        LocationID smallint ,\n        Borough varchar(15) COLLATE Latin1_General_100_CI_AI_SC_UTF8,\n        Zone varchar(50) COLLATE Latin1_General_100_CI_AI_SC_UTF8,\n        service_zone varchar(15) COLLATE Latin1_General_100_CI_AI_SC_UTF8\n    )\n    AS [result]\n\n    CREATE DATABASE nyc_taxi_discorvery;\n\n    use nyc_taxi_discorvery;\n\n    alter database nyc_taxi_discorvery COLLATE Latin1_General_100_CI_AI_SC_UTF8;\n\n\n-- data types\nEXEC sp_describe_first_result_set N'\n    SELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK ''https://dataeng123gen2.dfs.core.windows.net/nyc-taxi-data/raw/taxi_zone.csv'',\n        FORMAT = ''CSV'',\n        PARSER_VERSION = ''2.0'',\n        HEADER_ROW = TRUE\n    ) \n    with (\n        LocationID smallint ,\n        Borough varchar(15) COLLATE Latin1_General_100_CI_AI_SC_UTF8,\n        Zone varchar(50) COLLATE Latin1_General_100_CI_AI_SC_UTF8,\n        service_zone varchar(15) COLLATE Latin1_General_100_CI_AI_SC_UTF8\n    ) AS [result]\n'\n\nSELECT name, collation_name from sys.databases; \n\ncreate EXTERNAL DATA SOURCE nyc_taxi_data_raw\nwith (\n    LOCATION = 'abfss://nyc-taxi-data@dataeng123gen2.dfs.core.windows.net/'\n)\n\ndrop EXTERNAL DATA SOURCE nyc_taxi_data_raw\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_discorvery",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

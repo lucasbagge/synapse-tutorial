@@ -1,0 +1,20 @@
+{
+	"name": "6_array",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi/discorvery"
+		},
+		"content": {
+			"query": "use nyc_taxi_discorvery;\nSELECT\n    cast(JSON_VALUE(jsonDoc, '$.payment_type') as SMALLINT) payment_type\n    , cast(JSON_VALUE(jsonDoc, '$.payment_type_desc[0].value') as VARCHAR(15)) payment_type_desc\nfrom OPENROWSET(\n    bulk 'raw/payment_type_array.json'\n    , DATA_SOURCE = 'nyc_taxi_data_raw'\n    , format = 'CSV'\n    , PARSER_VERSION='1.0'\n    , FIELDTERMINATOR = '0x0b'\n    , FIELDQUOTE = '0x0b'\n    , ROWTERMINATOR='0x0a'\n) with (\n    jsonDoc NVARCHAR(max)\n) as payment_type_array;\n\n-- new way not optimal\nSELECT\n    cast(JSON_VALUE(jsonDoc, '$.payment_type') as SMALLINT) payment_type\n    , cast(JSON_VALUE(jsonDoc, '$.payment_type_desc[0].value') as VARCHAR(15)) payment_type_desc_0\n    , cast(JSON_VALUE(jsonDoc, '$.payment_type_desc[1].value') as VARCHAR(15)) payment_type_desc_1\nfrom OPENROWSET(\n    bulk 'raw/payment_type_array.json'\n    , DATA_SOURCE = 'nyc_taxi_data_raw'\n    , format = 'CSV'\n    , PARSER_VERSION='1.0'\n    , FIELDTERMINATOR = '0x0b'\n    , FIELDQUOTE = '0x0b'\n    , ROWTERMINATOR='0x0a'\n) with (\n    jsonDoc NVARCHAR(max)\n) as payment_type_array;\n\n-- new way optimal\nSELECT\n    payment_type\n    , payment_type_desc_value\nfrom OPENROWSET(\n    bulk 'raw/payment_type_array.json'\n    , DATA_SOURCE = 'nyc_taxi_data_raw'\n    , format = 'CSV'\n    , PARSER_VERSION='1.0'\n    , FIELDTERMINATOR = '0x0b'\n    , FIELDQUOTE = '0x0b'\n    , ROWTERMINATOR='0x0a'\n) with (\n    jsonDoc NVARCHAR(max)\n) as payment_type_array \ncross apply OPENJSON(jsonDoc)\nwith(\n    payment_type SMALLINT\n    ,  payment_type_desc NVARCHAR(max) as JSON\n)\ncross apply OPENJSON(payment_type_desc)\nwith(\n    sub_type SMALLINT\n    , payment_type_desc_value VARCHAR(20) '$.value'\n)\n;\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_discorvery",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

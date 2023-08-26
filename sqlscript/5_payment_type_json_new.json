@@ -1,0 +1,20 @@
+{
+	"name": "5_payment_type_json_new",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi/discorvery"
+		},
+		"content": {
+			"query": "\nuse nyc_taxi_discorvery;\n\nSELECT\n    payment_type\n    , description\nfrom OPENROWSET(\n    bulk 'raw/payment_type.json'\n    , DATA_SOURCE = 'nyc_taxi_data_raw'\n    , format = 'CSV'\n    , FIELDTERMINATOR = '0x0b'\n    , FIELDQUOTE = '0x0b'\n    \n) with (\n    jsonDoc NVARCHAR(max)\n)\nas payment_type\ncross APPLY openjson(jsonDoc)\nwith(\n    payment_type SMALLINT\n    , description VARCHAR(20) '$.payment_type_desc'\n)\n;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_discorvery",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

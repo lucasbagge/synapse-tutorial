@@ -1,0 +1,20 @@
+{
+	"name": "2_explore_calender",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi/discorvery"
+		},
+		"content": {
+			"query": "use nyc_taxi_discorvery;\n\nSELECT\n    *\nfrom OPENROWSET(\n    bulk 'calender.csv'\n    , DATA_SOURCE = 'nyc_taxi_data_raw'\n    , format = 'csv'\n    , PARSER_VERSION = '2.0'\n    , HEADER_ROW = TRUE\n) as cal; \n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_discorvery",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

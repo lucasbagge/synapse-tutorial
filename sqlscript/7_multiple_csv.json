@@ -1,0 +1,20 @@
+{
+	"name": "7_multiple_csv",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi/discorvery"
+		},
+		"content": {
+			"query": "use nyc_taxi_discorvery;\n\nSELECT\n    *\nfrom\nOPENROWSET(\n    BULK 'raw/trip_data_green_csv/year=2020/month=01/*.csv'\n    , DATA_SOURCE = 'nyc_taxi_data_raw'\n    , FORMAT = 'CSV'\n    , PARSER_VERSION = '2.0'\n    , HEADER_ROW=TRUE\n) as [results];\n\n-- select sub folders\n\nSELECT\n    *\nfrom\nOPENROWSET(\n    BULK 'raw/trip_data_green_csv/year=2020/**'\n    , DATA_SOURCE = 'nyc_taxi_data_raw'\n    , FORMAT = 'CSV'\n    , PARSER_VERSION = '2.0'\n    , HEADER_ROW=TRUE\n) as [results];\n\n-- couple of months\n\nSELECT\n    *\nfrom\nOPENROWSET(\n    BULK (\n        'raw/trip_data_green_csv/year=2020/month=01/*.csv'\n        ,  'raw/trip_data_green_csv/year=2020/month=02/*.csv'\n    )\n    , DATA_SOURCE = 'nyc_taxi_data_raw'\n    , FORMAT = 'CSV'\n    , PARSER_VERSION = '2.0'\n    , HEADER_ROW=TRUE\n) as [results];\n\n-- file name\n\nSELECT\n    results.filename() as file_name\n    , results.filepath() as path\n    , count(1) as record_count\nfrom\nOPENROWSET(\n    BULK \n        'raw/trip_data_green_csv/year=*/month=*/*.csv'\n    , DATA_SOURCE = 'nyc_taxi_data_raw'\n    , FORMAT = 'CSV'\n    , PARSER_VERSION = '2.0'\n    , HEADER_ROW=TRUE\n) \nas [results]\ngroup by \n    results.filename()\n    , results.filepath()\norder by results.filename()\n;\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_discorvery",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
