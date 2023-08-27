@@ -1,0 +1,20 @@
+{
+	"name": "9_delta",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi/discorvery"
+		},
+		"content": {
+			"query": "use  nyc_taxi_discorvery;\n\nSELECT top 100\n*\nfrom OPENROWSET(\n    bulk 'raw/trip_data_green_delta/'\n    , data_source = 'nyc_taxi_data_raw'\n    , format = 'delta'\n)\nas trip_data;\n\n\n/*\nform delta we get two columns with the partitions columns\n*/\n\n-- get an error for it looks for the delta log file which is not there \nSELECT top 100\n*\nfrom OPENROWSET(\n    bulk 'raw/trip_data_green_delta/year=2020'\n    , data_source = 'nyc_taxi_data_raw'\n    , format = 'delta'\n)\nas trip_data;\n\nexec sp_describe_first_result_set N'\n    SELECT top 100\n*\nfrom OPENROWSET(\n    bulk ''raw/trip_data_green_delta/''\n    , data_source = ''nyc_taxi_data_raw''\n    , format = ''delta''\n)\nas trip_data;\n'\n\n-- remeber to specifu\n\nSELECT top 100\n*\nfrom OPENROWSET(\n    bulk 'raw/trip_data_green_delta/'\n    , data_source = 'nyc_taxi_data_raw'\n    , format = 'delta'\n)with (\n    trip_type int\n    , tip_amount float\n    , year VARCHAR(4)\n    , month VARCHAR(2)\n)    \nAS [result];",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_discorvery",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
